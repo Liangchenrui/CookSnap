@@ -27,7 +27,13 @@ export function extractJsonObject(content: string): unknown {
   return JSON.parse(unfenced);
 }
 
-export function createLlmClient(env: LlmClientEnv = process.env): LlmClient {
+export function createLlmClient(
+  env: LlmClientEnv = {
+    LLM_BASE_URL: process.env.LLM_BASE_URL,
+    LLM_MODEL: process.env.LLM_MODEL,
+    LLM_API_KEY: process.env.LLM_API_KEY
+  }
+): LlmClient {
   const baseUrl = env.LLM_BASE_URL?.replace(/\/$/, "") || "https://api.deepseek.com";
   const model = env.LLM_MODEL || "deepseek-v4-flash";
   const apiKey = env.LLM_API_KEY;
