@@ -1,0 +1,16 @@
+{
+  "name": "CookForFree",
+  "short_name": "CookForFree",
+  "description": "A mobile cooking assistant for ingredients you already have.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fffaf3",
+  "theme_color": "#2f6f4e",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
