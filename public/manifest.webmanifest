@@ -1,7 +1,7 @@
 {
-  "name": "CookForFree",
-  "short_name": "CookForFree",
-  "description": "A mobile cooking assistant for ingredients you already have.",
+  "name": "随手做 CookSnap",
+  "short_name": "随手做",
+  "description": "用手边食材快速找到今天能做的菜。",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fffaf3",

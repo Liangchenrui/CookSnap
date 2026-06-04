@@ -22,8 +22,15 @@ describe("local storage helpers", () => {
   });
 
   it("returns null for invalid stored preferences", () => {
-    localStorage.setItem("cookforfree.preferences", JSON.stringify({ tastes: "bad" }));
+    localStorage.setItem("cooksnap.preferences", JSON.stringify({ tastes: "bad" }));
     expect(loadPreferences()).toBeNull();
+  });
+
+  it("migrates legacy CookForFree storage keys", () => {
+    const preferences = makePreferences({ tastes: ["清淡"] });
+    localStorage.setItem("cookforfree.preferences", JSON.stringify(preferences));
+    expect(loadPreferences()).toEqual(preferences);
+    expect(localStorage.getItem("cooksnap.preferences")).toBe(JSON.stringify(preferences));
   });
 
   it("prepends history and limits it to 20 entries", () => {

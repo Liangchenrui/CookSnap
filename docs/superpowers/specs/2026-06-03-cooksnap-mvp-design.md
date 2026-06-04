@@ -1,10 +1,10 @@
-# CookForFree MVP Design
+# 随手做 CookSnap MVP Design
 
 Date: 2026-06-03
 
 ## Goal
 
-CookForFree is a mobile-first cooking assistant. The MVP helps a user enter ingredients they already have, then uses an LLM to recommend dishes they can cook today. Each recommendation includes a short cooking outline and search entry points for Xiaohongshu and Douyin tutorials.
+随手做 CookSnap is a mobile-first cooking assistant. The MVP helps a user enter ingredients they already have, then uses an LLM to recommend dishes they can cook today. Each recommendation includes a short cooking outline and search entry points for Xiaohongshu and Douyin tutorials.
 
 The first version optimizes for two outcomes:
 

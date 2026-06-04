@@ -7,7 +7,8 @@ import {
 import { buildIngredientParseMessages, buildRecipeRecommendationMessages } from "./prompts";
 import { apiRateLimiter } from "./rateLimit";
 import { createLlmClient, type LlmClient } from "./llmClient";
-import { logTechnicalEvent } from "./logging";
+import { logTechnicalEvent, type TechnicalSchemaIssue } from "./logging";
+import { normalizeRecommendationJson } from "./recommendationNormalizer";
 
 type HandlerDeps = {
   llm?: LlmClient;
@@ -31,6 +32,18 @@ function rateLimit(request: Request) {
 
 function createId() {
   return crypto.randomUUID();
+}
+
+function formatSchemaPath(path: PropertyKey[]) {
+  return path.map(String).join(".");
+}
+
+function toTechnicalSchemaIssues(issues: { path: PropertyKey[]; code: string; message: string }[]): TechnicalSchemaIssue[] {
+  return issues.map((issue) => ({
+    path: formatSchemaPath(issue.path),
+    code: issue.code,
+    message: issue.message
+  }));
 }
 
 export async function handleParseIngredients(request: Request, deps: HandlerDeps = {}) {
@@ -98,10 +111,11 @@ export async function handleRecommendRecipes(request: Request, deps: HandlerDeps
 
     const llm = deps.llm || createLlmClient();
     const messages = buildRecipeRecommendationMessages(parsedRequest.data.ingredients, parsedRequest.data.preferences);
+    let schemaIssues: TechnicalSchemaIssue[] | undefined;
 
     for (let attempt = 0; attempt < 2; attempt += 1) {
       const result = await llm.completeJson(messages);
-      const parsedResponse = recommendationResponseSchema.safeParse(result.json);
+      const parsedResponse = recommendationResponseSchema.safeParse(normalizeRecommendationJson(result.json));
 
       if (parsedResponse.success) {
         logTechnicalEvent({
@@ -112,12 +126,15 @@ export async function handleRecommendRecipes(request: Request, deps: HandlerDeps
         });
         return jsonResponse(parsedResponse.data);
       }
+
+      schemaIssues = toTechnicalSchemaIssues(parsedResponse.error.issues);
     }
 
     logTechnicalEvent({
       endpoint: "/api/recommend-recipes",
       durationMs: Date.now() - started,
-      errorType: "schema_error"
+      errorType: "schema_error",
+      schemaIssues
     });
     return jsonResponse({ error: "recommendation_failed" }, 502);
   } catch {

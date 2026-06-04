@@ -1,8 +1,8 @@
-# CookForFree MVP Implementation Plan
+# 随手做 CookSnap MVP Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the approved CookForFree MVP: a mobile-first PWA that stores user kitchen preferences locally, accepts natural-language ingredients, calls a thin backend LLM proxy, and renders grouped recipe recommendations with tutorial search links.
+**Goal:** Build the approved 随手做 CookSnap MVP: a mobile-first PWA that stores user kitchen preferences locally, accepts natural-language ingredients, calls a thin backend LLM proxy, and renders grouped recipe recommendations with tutorial search links.
 
 **Architecture:** Use a single Next.js App Router project. The browser owns preferences, history, and favorites through local storage; API routes own request validation, prompt assembly, DeepSeek-compatible LLM calls, schema validation, retry, rate limiting, and sanitized technical logging. Shared TypeScript types and Zod schemas keep frontend and backend contracts aligned.
 
@@ -12,7 +12,7 @@
 
 ## Task Boundary
 
-This plan implements only the approved MVP in `docs/superpowers/specs/2026-06-03-cook-for-free-mvp-design.md`.
+This plan implements only the approved MVP in `docs/superpowers/specs/2026-06-03-cooksnap-mvp-design.md`.
 
 It does not add accounts, cross-device sync, image recognition, platform crawling, nutrition features, or full fridge inventory management.
 
@@ -268,8 +268,8 @@ Create `public/manifest.webmanifest`:
 
 ```json
 {
-  "name": "CookForFree",
-  "short_name": "CookForFree",
+  "name": "随手做 CookSnap",
+  "short_name": "随手做 CookSnap",
   "description": "A mobile cooking assistant for ingredients you already have.",
   "start_url": "/",
   "display": "standalone",
@@ -305,7 +305,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CookForFree",
+  title: "随手做 CookSnap",
   description: "Find what to cook from ingredients you already have.",
   manifest: "/manifest.webmanifest"
 };
@@ -334,7 +334,7 @@ export default function HomePage() {
   return (
     <main className="app-shell">
       <section className="hero-panel">
-        <p className="eyebrow">CookForFree</p>
+        <p className="eyebrow">随手做 CookSnap</p>
         <h1>今天家里有什么，就做什么。</h1>
         <p className="lede">输入现有食材，稍后这里会展示可做菜品推荐。</p>
       </section>
@@ -433,7 +433,7 @@ Run:
 
 ```powershell
 git add .gitignore .env.example next.config.mjs tsconfig.json eslint.config.mjs vitest.config.ts vitest.setup.ts playwright.config.ts package.json package-lock.json public src/app
-git commit -m "chore: scaffold cookforfree app"
+git commit -m "chore: scaffold cooksnap app"
 ```
 
 Expected: commit succeeds.
@@ -794,7 +794,7 @@ describe("local storage helpers", () => {
   });
 
   it("returns null for invalid stored preferences", () => {
-    localStorage.setItem("cookforfree.preferences", JSON.stringify({ tastes: "bad" }));
+    localStorage.setItem("cooksnap.preferences", JSON.stringify({ tastes: "bad" }));
     expect(loadPreferences()).toBeNull();
   });
 
@@ -876,9 +876,9 @@ import {
   userPreferencesSchema
 } from "./schemas";
 
-const PREFERENCES_KEY = "cookforfree.preferences";
-const HISTORY_KEY = "cookforfree.history";
-const FAVORITES_KEY = "cookforfree.favorites";
+const PREFERENCES_KEY = "cooksnap.preferences";
+const HISTORY_KEY = "cooksnap.history";
+const FAVORITES_KEY = "cooksnap.favorites";
 const HISTORY_LIMIT = 20;
 
 function hasLocalStorage() {
@@ -1102,7 +1102,7 @@ export type TechnicalLogEvent = {
 
 export function logTechnicalEvent(event: TechnicalLogEvent) {
   console.info(
-    "cookforfree.api",
+    "cooksnap.api",
     JSON.stringify({
       timestamp: new Date().toISOString(),
       endpoint: event.endpoint,

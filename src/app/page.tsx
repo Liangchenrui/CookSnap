@@ -1,7 +1,7 @@
 "use client";
 
 import { Settings, Soup, Star } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FavoritesHistory } from "@/components/FavoritesHistory";
 import { IngredientComposer } from "@/components/IngredientComposer";
 import { KitchenProfileForm } from "@/components/KitchenProfileForm";
@@ -19,13 +19,19 @@ import type { IngredientItem, RecipeCard, RecipeGroup, RecommendationHistoryItem
 type ActiveTab = "home" | "saved" | "settings";
 
 export default function HomePage() {
-  const [preferences, setPreferences] = useState<UserPreferences | null>(() => loadPreferences());
+  const [preferences, setPreferences] = useState<UserPreferences | null>(null);
   const [activeTab, setActiveTab] = useState<ActiveTab>("home");
   const [groups, setGroups] = useState<RecipeGroup[]>([]);
-  const [favorites, setFavorites] = useState<RecipeCard[]>(() => loadFavorites());
-  const [history, setHistory] = useState<RecommendationHistoryItem[]>(() => loadHistory());
+  const [favorites, setFavorites] = useState<RecipeCard[]>([]);
+  const [history, setHistory] = useState<RecommendationHistoryItem[]>([]);
   const [isRecommending, setIsRecommending] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setPreferences(loadPreferences());
+    setFavorites(loadFavorites());
+    setHistory(loadHistory());
+  }, []);
 
   const favoriteIds = useMemo(() => new Set(favorites.map((recipe) => recipe.id)), [favorites]);
 
