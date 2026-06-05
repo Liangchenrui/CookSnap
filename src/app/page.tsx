@@ -28,9 +28,11 @@ export default function HomePage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- Browser storage loads after mount to keep the server render stable. */
     setPreferences(loadPreferences());
     setFavorites(loadFavorites());
     setHistory(loadHistory());
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   const favoriteIds = useMemo(() => new Set(favorites.map((recipe) => recipe.id)), [favorites]);
@@ -83,9 +85,12 @@ export default function HomePage() {
   }
 
   function saveProfile(next: UserPreferences) {
+    const isFirstRun = !preferences;
     savePreferences(next);
     setPreferences(next);
-    setActiveTab("home");
+    if (isFirstRun) {
+      setActiveTab("home");
+    }
   }
 
   function handleFavorite(recipe: RecipeCard) {
@@ -93,7 +98,7 @@ export default function HomePage() {
     setFavorites(loadFavorites());
   }
 
-  if (!preferences || activeTab === "settings") {
+  if (!preferences) {
     return (
       <main className="app-shell">
         <KitchenProfileForm initialValue={preferences} onSave={saveProfile} />
@@ -110,8 +115,10 @@ export default function HomePage() {
           {error ? <p className="error-text">{error}</p> : null}
           {groups.length ? <RecipeGroups groups={groups} favoriteIds={favoriteIds} onToggleFavorite={handleFavorite} /> : null}
         </div>
-      ) : (
+      ) : activeTab === "saved" ? (
         <FavoritesHistory favorites={favorites} history={history} onRemoveFavorite={handleFavorite} />
+      ) : (
+        <KitchenProfileForm initialValue={preferences} isFirstRun={false} onSave={saveProfile} />
       )}
       <nav className="bottom-nav" aria-label="主导航">
         <button className={activeTab === "home" ? "active" : ""} type="button" onClick={() => setActiveTab("home")}>
@@ -120,7 +127,7 @@ export default function HomePage() {
         <button className={activeTab === "saved" ? "active" : ""} type="button" onClick={() => setActiveTab("saved")}>
           <Star size={18} /> 收藏
         </button>
-        <button type="button" onClick={() => setActiveTab("settings")}>
+        <button className={activeTab === "settings" ? "active" : ""} type="button" onClick={() => setActiveTab("settings")}>
           <Settings size={18} /> 设置
         </button>
       </nav>

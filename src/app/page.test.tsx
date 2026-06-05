@@ -1,3 +1,5 @@
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import HomePage from "./page";
@@ -11,7 +13,47 @@ describe("HomePage", () => {
 
     const html = renderToString(<HomePage />);
 
-    expect(html).toContain("保存厨房画像");
+    expect(html).toContain("保存设置");
     expect(html).not.toContain("今天做什么");
+  });
+
+  it("returns to the ingredient flow after saving first-run settings", async () => {
+    const user = userEvent.setup();
+    localStorage.clear();
+    render(<HomePage />);
+
+    await user.click(screen.getByRole("button", { name: "保存设置" }));
+
+    expect(screen.getByLabelText("现有食材")).toBeInTheDocument();
+  });
+
+  it("keeps saved users on the settings view after saving settings", async () => {
+    const user = userEvent.setup();
+    localStorage.clear();
+    savePreferences(makePreferences());
+    render(<HomePage />);
+
+    await screen.findByLabelText("现有食材");
+    await user.click(screen.getByRole("button", { name: "设置" }));
+    await user.click(screen.getByRole("button", { name: "保存设置" }));
+
+    expect(screen.getByRole("status")).toHaveTextContent("设置已保存");
+    expect(screen.queryByLabelText("现有食材")).not.toBeInTheDocument();
+  });
+
+  it("lets saved users return home from settings", async () => {
+    const user = userEvent.setup();
+    localStorage.clear();
+    savePreferences(makePreferences());
+    render(<HomePage />);
+
+    await screen.findByLabelText("现有食材");
+    await user.click(screen.getByRole("button", { name: "设置" }));
+
+    expect(screen.getByRole("heading", { name: "设置" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "今天做什么" }));
+
+    expect(screen.getByLabelText("现有食材")).toBeInTheDocument();
   });
 });
