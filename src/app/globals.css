@@ -130,11 +130,51 @@ select {
   padding-top: 16px;
 }
 
+.settings-list {
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.settings-entry {
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18px;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #fff;
+  color: var(--text);
+  text-align: left;
+  font-weight: 700;
+}
+
+.settings-entry svg {
+  color: var(--accent-strong);
+}
+
+.subpage-header {
+  display: grid;
+  gap: 12px;
+}
+
+.subpage-header .link-button {
+  justify-self: start;
+}
+
 .settings-section h2 {
   margin: 0;
   font-size: 18px;
   line-height: 1.3;
   letter-spacing: 0;
+}
+
+.section-action {
+  justify-self: start;
 }
 
 .checklist-grid {

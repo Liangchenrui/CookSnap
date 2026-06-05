@@ -45,10 +45,9 @@ test("returning user parses ingredients and receives recommendations", async ({ 
   });
 
   await page.goto("/");
-  await expect(async () => {
-    await page.getByRole("button", { name: "保存设置" }).click();
-    await expect(page.getByLabel("现有食材")).toBeVisible({ timeout: 1_000 });
-  }).toPass();
+  await page.getByRole("button", { name: "编辑口味偏好" }).click();
+  await page.getByLabel("少油").click();
+  await expect(page.getByLabel("现有食材")).toBeVisible();
   await page.getByLabel("现有食材").fill("鸡蛋 2 个，番茄 3 个");
   await page.getByRole("button", { name: "解析食材" }).click();
   await expect(page.getByRole("textbox", { name: "鸡蛋 名称" })).toBeVisible();

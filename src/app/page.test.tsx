@@ -13,21 +13,23 @@ describe("HomePage", () => {
 
     const html = renderToString(<HomePage />);
 
-    expect(html).toContain("保存设置");
+    expect(html).toContain("先记住你的厨房习惯。");
+    expect(html).not.toContain("保存设置");
     expect(html).not.toContain("今天做什么");
   });
 
-  it("returns to the ingredient flow after saving first-run settings", async () => {
+  it("returns to the ingredient flow after changing first-run settings", async () => {
     const user = userEvent.setup();
     localStorage.clear();
     render(<HomePage />);
 
-    await user.click(screen.getByRole("button", { name: "保存设置" }));
+    await user.click(screen.getByRole("button", { name: "编辑口味偏好" }));
+    await user.click(screen.getByLabelText("少油"));
 
     expect(screen.getByLabelText("现有食材")).toBeInTheDocument();
   });
 
-  it("keeps saved users on the settings view after saving settings", async () => {
+  it("keeps saved users on the settings view after auto-saving settings", async () => {
     const user = userEvent.setup();
     localStorage.clear();
     savePreferences(makePreferences());
@@ -35,9 +37,9 @@ describe("HomePage", () => {
 
     await screen.findByLabelText("现有食材");
     await user.click(screen.getByRole("button", { name: "设置" }));
-    await user.click(screen.getByRole("button", { name: "保存设置" }));
+    await user.click(screen.getByRole("button", { name: "编辑口味偏好" }));
+    await user.click(screen.getByLabelText("少油"));
 
-    expect(screen.getByRole("status")).toHaveTextContent("设置已保存");
     expect(screen.queryByLabelText("现有食材")).not.toBeInTheDocument();
   });
 
